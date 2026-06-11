@@ -6,7 +6,6 @@ build-backend = "setuptools.build_meta"
 name = "backend"
 version = "1.0.0"
 description = "Backend do Censo Escolar com AWS"
-readme = "README.md"
 requires-python = ">=3.13"
 authors = [
     { name = "Victor Gustavo", email = "gustavo.victor@academico.ifpb.edu.br" },
