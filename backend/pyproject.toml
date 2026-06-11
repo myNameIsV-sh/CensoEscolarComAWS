@@ -13,5 +13,9 @@ authors = [
 ]
 dependencies = [
     "flask",
-    "flask-cors"
+    "flask-cors",
+    "pandas",
+    "boto3",
+    "sqlalchemy",
+    "psycopg2-binary"
 ]
