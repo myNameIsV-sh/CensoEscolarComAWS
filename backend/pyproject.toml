@@ -12,5 +12,6 @@ authors = [
     { name = "Alice Tavares", email = "alice.tavares@academico.ifpb.edu.br" }
 ]
 dependencies = [
-    "flask"
+    "flask",
+    "flask-cors"
 ]
