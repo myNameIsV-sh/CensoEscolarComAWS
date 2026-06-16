@@ -32,11 +32,11 @@ def get_ssm_parameter(parameter_name):
 def get_db_engine():
     """Configura engine SQLAlchemy buscando credenciais no Parameter Store."""
     # Nota: Assumimos que os nomes dos parâmetros SSM estão definidos
-    user = get_ssm_parameter('/censo/db/user')
-    password = get_ssm_parameter('/censo/db/password')
-    host = get_ssm_parameter('/censo/db/host')
-    port = get_ssm_parameter('/censo/db/port')
-    db_name = get_ssm_parameter('/censo/db/name')
+    user = get_ssm_parameter('/dev/flask-app/DB_USER')
+    password = get_ssm_parameter('/dev/flask-app/DB_PASSWORD')
+    host = get_ssm_parameter('/dev/flask-app/DB_HOST')
+    port = get_ssm_parameter('/dev/flask-app/DB_PORT')
+    db_name = get_ssm_parameter('/dev/flask-app/DB_NAME')
     
     connection_string = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
     return create_engine(connection_string)
