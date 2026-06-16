@@ -1,16 +1,15 @@
-FROM python:3.13-slim
+# Usando a imagem base oficial do Lambda para Python 3.13
+FROM public.ecr.aws/lambda/python:3.13
 
-WORKDIR /app
+# Instalar dependências de build (gcc e postgresql-devel são necessários para psycopg2-binary compilar se necessário, embora o pacote binário ajude)
+RUN dnf install -y gcc postgresql-devel
 
+# Copiar arquivo de dependências
 COPY pyproject.toml ./
-
 RUN pip install --no-cache-dir .
 
-COPY app.py ./
+# Copiar o código do Lambda
+COPY read_csv.py ./
 
-EXPOSE 5000
-
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-CMD ["flask", "run"]
+# Definir o handler para a função Lambda
+CMD ["read_csv.lambda_handler"]
