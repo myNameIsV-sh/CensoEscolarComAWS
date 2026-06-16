@@ -1,45 +1,60 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function App() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Busca os dados da API Flask
-    fetch('http://localhost:5000/')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Erro na requisição ao backend');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setStatus('');
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      setStatus('Por favor, selecione um arquivo CSV primeiro.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setLoading(true);
+    setStatus('Enviando...');
+
+    try {
+      // Substitua pelo IP público da sua EC2
+      const response = await fetch('http://18.234.83.141:5000/upload', {
+        method: 'POST',
+        body: formData,
       });
-  }, []);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro no upload');
+      }
+
+      setStatus(`Sucesso: ${data.message}`);
+    } catch (error) {
+      setStatus(`Erro: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
-      <h1>Consumindo API Flask com React</h1>
+      <h1>Upload do Censo Escolar</h1>
       
-      {loading && <p>Carregando...</p>}
-      
-      {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
-      
-      {data && (
-        <div style={{ padding: '20px', border: '1px solid #ccc', display: 'inline-block', borderRadius: '8px' }}>
-          <h3>Mensagem recebida do Python:</h3>
-          <p style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#007bff' }}>
-            {data.message}
-          </p>
-        </div>
-      )}
+      <div style={{ margin: '20px' }}>
+        <input type="file" onChange={handleFileChange} accept=".csv" />
+        <button onClick={handleUpload} disabled={loading || !file}>
+          {loading ? 'Enviando...' : 'Enviar para S3'}
+        </button>
+      </div>
+
+      {status && <p style={{ color: status.includes('Erro') ? 'red' : 'green' }}>{status}</p>}
     </div>
   );
 }
